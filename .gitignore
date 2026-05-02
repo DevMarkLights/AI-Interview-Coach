@@ -1,0 +1,7 @@
+.env
+.vscode
+/backend/__pycache__
+/backend/graph/__pycache__
+/backend/utils/__pycache__
+
+*.pyc
