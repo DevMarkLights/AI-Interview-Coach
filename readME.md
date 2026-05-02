@@ -1,4 +1,5 @@
-Folder Structure
+## Folder Structure
+```
 ai-interview-coach/
 ├── backend/
 │   ├── main.py              # FastAPI + WebSocket
@@ -20,3 +21,4 @@ ai-interview-coach/
     │   │   ├── InterviewSession.jsx
     │   │   └── Scorecard.jsx
     │   └── App.jsx
+```
