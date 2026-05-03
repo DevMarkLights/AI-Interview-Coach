@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 from graph.state import InterviewState
 load_dotenv()
 
-from graph.agents.loadModel import llm_small
+from graph.agents.loadModel import llm_large
 
-_llm = llm_small
+_llm = llm_large
 
 NUMBER_OF_QUESTIONS = 1
 
