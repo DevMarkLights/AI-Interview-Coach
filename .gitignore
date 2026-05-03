@@ -5,3 +5,4 @@
 /backend/utils/__pycache__
 
 *.pyc
+/frontend/package-lock.json

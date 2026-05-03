@@ -3,7 +3,7 @@ import JDInput from './components/jd_input'
 import ModeSelector from './components/mode_selector'
 import InterviewSession from './components/interview_session'
 import Scorecard from './components/scorecard'
-import styles from './app.module.css'
+import styles from './App.module.css'
 
 const VIEWS = {
   INPUT: 'input',
