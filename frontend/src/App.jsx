@@ -31,7 +31,7 @@ export default function App() {
   const [scorecard, setScorecard] = useState(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [mobile,setMobile] = useState(false)
-  const [minimizeSidebar,setMinimizeSidebar] = useState(false)
+  const [minimizeSidebar,setMinimizeSidebar] = useState(true)
 
   // Filtered questions based on selected modes
   const activeQuestions = questions.filter(q => selectedModes.includes(q.mode))
