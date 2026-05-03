@@ -21,13 +21,15 @@ from pathlib import Path
 from graph.agents.loadModel import llm_small, llm_large #load model one time
 from graph.pipeline import interview_graph
 import logging
+import os
+from dotenv import load_dotenv
+load_dotenv()
+DEPLOY_SECRET = os.getenv("DEPLOY_SECRET")
 
 logging.basicConfig(level=logging.ERROR)
 logging.getLogger("uvicorn.access").setLevel(logging.INFO)
 logging.getLogger("uvicorn.error").setLevel(logging.INFO)
 
-
-# from test_data import job_desc, SAMPLE_ANSWERS
 
 app = FastAPI()
 app.add_middleware(
@@ -91,33 +93,18 @@ async def answer(request: Request):
         return {'error': 'questions/jd_analysis not in request'}
     
 
+@app.post("/ai-interview-coach/deploy")
+async def deploy(request: Request):
+    body = await request.json()
+    if body.get("secret") != DEPLOY_SECRET:
+        raise HTTPException(status_code=401)
+    
+    subprocess.Popen(["bash", f"/mnt/nvme/AI-Interview-Coach/deploy.bash"])
+    return {"status": "deploying", "service": 'Security Service'}
+    
+app.mount('/ai-interview-coach/', StaticFiles(directory="dist", html=True), name="static")
+
 if __name__ == "__main__":
-    
-    # result = interview_graph.invoke({"jd_raw": job_desc})
-
-    
-    # by_mode = {}
-    # for q in result["questions"]:
-    #     by_mode.setdefault(q["mode"], []).append(q)
-    
-    # EVALUTAIONS = []
-    # # Test one question per mode
-    # for mode, sample_answer in SAMPLE_ANSWERS.items():
-    #     questions = by_mode.get(mode, [])
-    #     if not questions:
-    #         print(f"⚠️  No questions found for mode: {mode}\n")
-    #         continue
- 
-    #     question = questions[0]
- 
-    #     evaluation = evaluate_answer(
-    #         question=question,
-    #         answer=sample_answer,
-    #         jd_analysis=result["jd_analysis"]
-    #     )
-    #     EVALUTAIONS.append(evaluation)
-
-    # print(generate_scorecard(EVALUTAIONS,result['jd_analysis']))
     import uvicorn
 
     uvicorn.run(
