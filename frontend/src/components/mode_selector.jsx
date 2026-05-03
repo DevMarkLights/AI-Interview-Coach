@@ -31,7 +31,7 @@ const MODES = [
   },
 ]
 
-export default function ModeSelector({ selectedModes, setSelectedModes, questions, onConfirm }) {
+export default function ModeSelector({ selectedModes, setSelectedModes, questions, onConfirm, mobile }) {
   function toggleMode(id) {
     if (selectedModes.includes(id)) {
       if (selectedModes.length === 1) return // keep at least one
@@ -44,75 +44,151 @@ export default function ModeSelector({ selectedModes, setSelectedModes, question
   const questionCount = questions.filter(q => selectedModes.includes(q.mode)).length
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.eyebrow}>
-          <span className={styles.eyebrowDot} />
-          step 02
+    <>
+    {mobile ?
+      <div className={styles.container} style={{padding: '10px'}}>
+        <div className={styles.header}>
+          <div className={styles.eyebrow}>
+            <span className={styles.eyebrowDot} />
+            step 02
+          </div>
+          <h2 className={styles.title}>Choose your<br /><span className={styles.titleAccent}>interview modes.</span></h2>
+          <p className={styles.subtitle}>
+            Select the categories you want to practice. All modes are active by default —
+            deselect any you want to skip.
+          </p>
         </div>
-        <h2 className={styles.title}>Choose your<br /><span className={styles.titleAccent}>interview modes.</span></h2>
-        <p className={styles.subtitle}>
-          Select the categories you want to practice. All modes are active by default —
-          deselect any you want to skip.
-        </p>
-      </div>
 
-      <div className={styles.grid}>
-        {MODES.map(mode => {
-          const isSelected = selectedModes.includes(mode.id)
-          const modeQuestionCount = questions.filter(q => q.mode === mode.id).length
+        <div className={styles.grid}>
+          {MODES.map(mode => {
+            const isSelected = selectedModes.includes(mode.id)
+            const modeQuestionCount = questions.filter(q => q.mode === mode.id).length
 
-          return (
-            <button
-              key={mode.id}
-              className={`${styles.card} ${isSelected ? styles.cardSelected : ''}`}
-              onClick={() => toggleMode(mode.id)}
-            >
-              <div className={styles.cardTop}>
-                <span className={styles.cardIcon}>{mode.icon}</span>
-                <div className={styles.cardCheck}>
-                  {isSelected ? <span className={styles.checkFilled}>✓</span> : <span className={styles.checkEmpty} />}
+            return (
+              <button
+                key={mode.id}
+                className={`${styles.card} ${isSelected ? styles.cardSelected : ''}`}
+                onClick={() => toggleMode(mode.id)}
+                style={{padding:'5px'}}
+              >
+                <div className={styles.cardTop}>
+                  <span className={styles.cardIcon}>{mode.icon}</span>
+                  <div className={styles.cardCheck}>
+                    {isSelected ? <span className={styles.checkFilled}>✓</span> : <span className={styles.checkEmpty} />}
+                  </div>
                 </div>
-              </div>
 
-              <div className={styles.cardLabel}>{mode.label}</div>
-              <div className={styles.cardDesc}>{mode.description}</div>
+                <div className={styles.cardLabel}>{mode.label}</div>
+                <div className={styles.cardDesc}>{mode.description}</div>
 
-              <div className={styles.cardFooter}>
-                <div className={styles.cardTags}>
-                  {mode.tags.map(tag => (
-                    <span key={tag} className={styles.tag}>{tag}</span>
-                  ))}
+                <div className={styles.cardFooter}>
+                  <div className={styles.cardTags}>
+                    {mode.tags.map(tag => (
+                      <span key={tag} className={styles.tag}>{tag}</span>
+                    ))}
+                  </div>
+                  {modeQuestionCount > 0 && (
+                    <span className={styles.qCount}>
+                      {modeQuestionCount}Q
+                    </span>
+                  )}
                 </div>
-                {modeQuestionCount > 0 && (
-                  <span className={styles.qCount}>
-                    {modeQuestionCount}Q
-                  </span>
-                )}
-              </div>
-            </button>
-          )
-        })}
-      </div>
-
-      <div className={styles.footer}>
-        <div className={styles.footerInfo}>
-          <span className={styles.footerCount}>
-            <span className={styles.footerCountNum}>{questionCount}</span> questions selected
-          </span>
-          <span className={styles.footerModes}>
-            {selectedModes.length} of {MODES.length} modes active
-          </span>
+              </button>
+            )
+          })}
         </div>
-        <button
-          className={styles.confirmBtn}
-          onClick={onConfirm}
-          disabled={selectedModes.length === 0}
-        >
-          Start Interview
-          <span className={styles.confirmArrow}>→</span>
-        </button>
+
+        <div className={styles.footer}>
+          <div className={styles.footerInfo}>
+            <span className={styles.footerCount}>
+              <span className={styles.footerCountNum}>{questionCount}</span> questions selected
+            </span>
+            <span className={styles.footerModes}>
+              {selectedModes.length} of {MODES.length} modes active
+            </span>
+          </div>
+          <button
+            className={styles.confirmBtn}
+            onClick={onConfirm}
+            disabled={selectedModes.length === 0}
+          >
+            Start Interview
+            <span className={styles.confirmArrow}>→</span>
+          </button>
+        </div>
       </div>
-    </div>
+    :
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.eyebrow}>
+            <span className={styles.eyebrowDot} />
+            step 02
+          </div>
+          <h2 className={styles.title}>Choose your<br /><span className={styles.titleAccent}>interview modes.</span></h2>
+          <p className={styles.subtitle}>
+            Select the categories you want to practice. All modes are active by default —
+            deselect any you want to skip.
+          </p>
+        </div>
+
+        <div className={styles.grid}>
+          {MODES.map(mode => {
+            const isSelected = selectedModes.includes(mode.id)
+            const modeQuestionCount = questions.filter(q => q.mode === mode.id).length
+
+            return (
+              <button
+                key={mode.id}
+                className={`${styles.card} ${isSelected ? styles.cardSelected : ''}`}
+                onClick={() => toggleMode(mode.id)}
+              >
+                <div className={styles.cardTop}>
+                  <span className={styles.cardIcon}>{mode.icon}</span>
+                  <div className={styles.cardCheck}>
+                    {isSelected ? <span className={styles.checkFilled}>✓</span> : <span className={styles.checkEmpty} />}
+                  </div>
+                </div>
+
+                <div className={styles.cardLabel}>{mode.label}</div>
+                <div className={styles.cardDesc}>{mode.description}</div>
+
+                <div className={styles.cardFooter}>
+                  <div className={styles.cardTags}>
+                    {mode.tags.map(tag => (
+                      <span key={tag} className={styles.tag}>{tag}</span>
+                    ))}
+                  </div>
+                  {modeQuestionCount > 0 && (
+                    <span className={styles.qCount}>
+                      {modeQuestionCount}Q
+                    </span>
+                  )}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+
+        <div className={styles.footer}>
+          <div className={styles.footerInfo}>
+            <span className={styles.footerCount}>
+              <span className={styles.footerCountNum}>{questionCount}</span> questions selected
+            </span>
+            <span className={styles.footerModes}>
+              {selectedModes.length} of {MODES.length} modes active
+            </span>
+          </div>
+          <button
+            className={styles.confirmBtn}
+            onClick={onConfirm}
+            disabled={selectedModes.length === 0}
+          >
+            Start Interview
+            <span className={styles.confirmArrow}>→</span>
+          </button>
+        </div>
+      </div>
+    }
+    </>
   )
 }

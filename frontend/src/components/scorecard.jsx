@@ -24,11 +24,13 @@ const SIGNAL_STYLES = {
   'No':         { color: 'var(--red)',    bg: 'var(--red-dim)',    border: 'rgba(255,95,95,0.2)'  },
 }
 
-export default function Scorecard({ evaluations, jdAnalysis, onRestart, onScorecardReady }) {
+export default function Scorecard({ evaluations, jdAnalysis, onRestart, onScorecardReady, mobile }) {
   const [scorecard, setScorecard] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  
   API_BASE = window.location.origin
+  
   useEffect(() => {
     async function fetchScorecard() {
       try {
@@ -57,151 +59,302 @@ export default function Scorecard({ evaluations, jdAnalysis, onRestart, onScorec
   const signalStyle = SIGNAL_STYLES[signal] || SIGNAL_STYLES['Maybe']
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.eyebrow}>
-          <span className={styles.eyebrowDot} />
-          interview complete
-        </div>
-        <h2 className={styles.title}>Your Scorecard</h2>
-        <p className={styles.subtitle}>
-          {jdAnalysis.role_title} · {jdAnalysis.company}
-        </p>
-      </div>
-
-      <div className={styles.content}>
-        {/* Hero score row */}
-        <div className={styles.heroRow}>
-          <div className={styles.heroScore}>
-            <ScoreRing score={scorecard.overall_score} size={96} strokeWidth={3} />
-            <div className={styles.heroScoreLabel}>Overall Score</div>
+    <>
+    {mobile ?
+      <div className={styles.container}>
+        <div className={styles.header} style={{padding:'10px'}}>
+          <div className={styles.eyebrow}>
+            <span className={styles.eyebrowDot} />
+            interview complete
           </div>
-
-          <div className={styles.heroSignal} style={{
-            background: signalStyle.bg,
-            border: `1px solid ${signalStyle.border}`,
-          }}>
-            <div className={styles.signalLabel}>Hiring Signal</div>
-            <div className={styles.signalValue} style={{ color: signalStyle.color }}>
-              {signal}
-            </div>
-            <div className={styles.signalDesc}>{getSignalDesc(signal)}</div>
-          </div>
-
-          <div className={styles.heroStats}>
-            <div className={styles.heroStat}>
-              <span className={styles.heroStatNum}>{evaluations.length}</span>
-              <span className={styles.heroStatLabel}>Questions</span>
-            </div>
-            <div className={styles.heroStatDivider} />
-            <div className={styles.heroStat}>
-              <span className={styles.heroStatNum}>
-                {Object.keys(scorecard.per_mode_scores).length}
-              </span>
-              <span className={styles.heroStatLabel}>Modes</span>
-            </div>
-            <div className={styles.heroStatDivider} />
-            <div className={styles.heroStat}>
-              <span className={styles.heroStatNum}>{scorecard.max_score}</span>
-              <span className={styles.heroStatLabel}>Max Score</span>
-            </div>
-          </div>
+          <h2 className={styles.title}>Your Scorecard</h2>
+          <p className={styles.subtitle}>
+            {jdAnalysis.role_title} · {jdAnalysis.company}
+          </p>
         </div>
 
-        {/* Per-mode scores */}
-        <div className={styles.section}>
-          <div className={styles.sectionLabel}>Per-Mode Breakdown</div>
-          <div className={styles.modeGrid}>
-            {Object.entries(scorecard.per_mode_scores).map(([mode, score]) => (
-              <div key={mode} className={styles.modeCard}>
-                <div className={styles.modeCardTop}>
-                  <span className={styles.modeCardIcon}>{MODE_ICONS[mode]}</span>
-                  <ScoreRing score={score} size={48} strokeWidth={3} />
-                </div>
-                <div className={styles.modeCardLabel}>{MODE_LABELS[mode] || mode}</div>
-                {scorecard.mode_summaries?.[mode] && (
-                  <div className={styles.modeCardSummary}>
-                    {scorecard.mode_summaries[mode]}
+        <div className={styles.content} style={{padding:'10px'}}>
+          {/* Hero score row */}
+          <div className={styles.heroRow}>
+            <div className={styles.heroScore}>
+              <ScoreRing score={scorecard.overall_score} size={96} strokeWidth={3} />
+              <div className={styles.heroScoreLabel}>Overall Score</div>
+            </div>
+
+            <div className={styles.heroSignal} style={{
+              background: signalStyle.bg,
+              border: `1px solid ${signalStyle.border}`,
+            }}>
+              <div className={styles.signalLabel}>Hiring Signal</div>
+              <div className={styles.signalValue} style={{ color: signalStyle.color }}>
+                {signal}
+              </div>
+              <div className={styles.signalDesc}>{getSignalDesc(signal)}</div>
+            </div>
+
+            <div className={styles.heroStats}>
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatNum}>{evaluations.length}</span>
+                <span className={styles.heroStatLabel}>Questions</span>
+              </div>
+              <div className={styles.heroStatDivider} />
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatNum}>
+                  {Object.keys(scorecard.per_mode_scores).length}
+                </span>
+                <span className={styles.heroStatLabel}>Modes</span>
+              </div>
+              <div className={styles.heroStatDivider} />
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatNum}>{scorecard.max_score}</span>
+                <span className={styles.heroStatLabel}>Max Score</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Per-mode scores */}
+          <div className={styles.section}>
+            <div className={styles.sectionLabel}>Per-Mode Breakdown</div>
+            <div className={styles.modeGrid}>
+              {Object.entries(scorecard.per_mode_scores).map(([mode, score]) => (
+                <div key={mode} className={styles.modeCard} style={{padding:'10px'}}>
+                  <div className={styles.modeCardTop}>
+                    <span className={styles.modeCardIcon}>{MODE_ICONS[mode]}</span>
+                    <ScoreRing score={score} size={48} strokeWidth={3} />
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Strengths & Improvements */}
-        <div className={styles.feedbackRow}>
-          <div className={styles.feedbackCol}>
-            <div className={styles.sectionLabel}>
-              <span className={styles.labelDot} style={{ background: 'var(--accent)' }} />
-              Top Strengths
-            </div>
-            <div className={styles.feedbackList}>
-              {(scorecard.top_strengths || []).map((s, i) => (
-                <div key={i} className={styles.feedbackItem}>
-                  <span className={styles.feedbackItemNum}>{String(i + 1).padStart(2, '0')}</span>
-                  <span className={styles.feedbackItemText}>{s}</span>
+                  <div className={styles.modeCardLabel}>{MODE_LABELS[mode] || mode}</div>
+                  {scorecard.mode_summaries?.[mode] && (
+                    <div className={styles.modeCardSummary}>
+                      {scorecard.mode_summaries[mode]}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           </div>
 
-          <div className={styles.feedbackCol}>
-            <div className={styles.sectionLabel}>
-              <span className={styles.labelDot} style={{ background: 'var(--yellow)' }} />
-              Areas to Improve
+          {/* Strengths & Improvements */}
+          <div className={styles.feedbackRow}>
+            <div className={styles.feedbackCol}>
+              <div className={styles.sectionLabel}>
+                <span className={styles.labelDot} style={{ background: 'var(--accent)' }} />
+                Top Strengths
+              </div>
+              <div className={styles.feedbackList}>
+                {(scorecard.top_strengths || []).map((s, i) => (
+                  <div key={i} className={styles.feedbackItem} style={{padding:'5px'}}>
+                    <span className={styles.feedbackItemNum}>{String(i + 1).padStart(2, '0')}</span>
+                    <span className={styles.feedbackItemText}>{s}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className={styles.feedbackList}>
-              {(scorecard.top_improvements || []).map((s, i) => (
-                <div key={i} className={styles.feedbackItemWarn}>
-                  <span className={styles.feedbackItemNum}>{String(i + 1).padStart(2, '0')}</span>
-                  <span className={styles.feedbackItemText}>{s}</span>
+
+            <div className={styles.feedbackCol}>
+              <div className={styles.sectionLabel}>
+                <span className={styles.labelDot} style={{ background: 'var(--yellow)' }} />
+                Areas to Improve
+              </div>
+              <div className={styles.feedbackList}>
+                {(scorecard.top_improvements || []).map((s, i) => (
+                  <div key={i} className={styles.feedbackItemWarn} style={{padding:'5px'}}>
+                    <span className={styles.feedbackItemNum}>{String(i + 1).padStart(2, '0')}</span>
+                    <span className={styles.feedbackItemText}>{s}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Overall summary */}
+          {scorecard.overall_summary && (
+            <div className={styles.summary}>
+              <div className={styles.sectionLabel}>Overall Assessment</div>
+              <div className={styles.summaryText} style={{padding:'10px'}}>{scorecard.overall_summary}</div>
+            </div>
+          )}
+
+          {/* Per-question review */}
+          <div className={styles.section}>
+            <div className={styles.sectionLabel}>Question Review</div>
+            <div className={styles.questionList}>
+              {evaluations.map((ev, i) => (
+                <div key={i} className={styles.questionRow}>
+                  <div className={styles.questionRowLeft}>
+                    <span className={styles.questionRowNum}>{String(i + 1).padStart(2, '0')}</span>
+                    <span className={styles.questionRowMode}>{MODE_ICONS[ev.mode]}</span>
+                    <span className={styles.questionRowText}>{ev.question}</span>
+                  </div>
+                  <div className={styles.questionRowRight}>
+                    <span className={`${styles.questionRowVerdict} ${
+                      ev.verdict === 'Strong' ? styles.verdictStrong :
+                      ev.verdict === 'Adequate' ? styles.verdictAdequate :
+                      styles.verdictWeak
+                    }`}>{ev.verdict}</span>
+                    <span className={styles.questionRowScore}>{ev.score}/10</span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Overall summary */}
-        {scorecard.overall_summary && (
-          <div className={styles.summary}>
-            <div className={styles.sectionLabel}>Overall Assessment</div>
-            <div className={styles.summaryText}>{scorecard.overall_summary}</div>
+          {/* Actions */}
+          <div className={styles.actions}>
+            <button className={styles.restartBtn} onClick={onRestart}>
+              ↺ Start Over
+            </button>
           </div>
-        )}
-
-        {/* Per-question review */}
-        <div className={styles.section}>
-          <div className={styles.sectionLabel}>Question Review</div>
-          <div className={styles.questionList}>
-            {evaluations.map((ev, i) => (
-              <div key={i} className={styles.questionRow}>
-                <div className={styles.questionRowLeft}>
-                  <span className={styles.questionRowNum}>{String(i + 1).padStart(2, '0')}</span>
-                  <span className={styles.questionRowMode}>{MODE_ICONS[ev.mode]}</span>
-                  <span className={styles.questionRowText}>{ev.question}</span>
-                </div>
-                <div className={styles.questionRowRight}>
-                  <span className={`${styles.questionRowVerdict} ${
-                    ev.verdict === 'Strong' ? styles.verdictStrong :
-                    ev.verdict === 'Adequate' ? styles.verdictAdequate :
-                    styles.verdictWeak
-                  }`}>{ev.verdict}</span>
-                  <span className={styles.questionRowScore}>{ev.score}/10</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className={styles.actions}>
-          <button className={styles.restartBtn} onClick={onRestart}>
-            ↺ Start Over
-          </button>
         </div>
       </div>
-    </div>
+    :
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.eyebrow}>
+            <span className={styles.eyebrowDot} />
+            interview complete
+          </div>
+          <h2 className={styles.title}>Your Scorecard</h2>
+          <p className={styles.subtitle}>
+            {jdAnalysis.role_title} · {jdAnalysis.company}
+          </p>
+        </div>
+
+        <div className={styles.content}>
+          {/* Hero score row */}
+          <div className={styles.heroRow}>
+            <div className={styles.heroScore}>
+              <ScoreRing score={scorecard.overall_score} size={96} strokeWidth={3} />
+              <div className={styles.heroScoreLabel}>Overall Score</div>
+            </div>
+
+            <div className={styles.heroSignal} style={{
+              background: signalStyle.bg,
+              border: `1px solid ${signalStyle.border}`,
+            }}>
+              <div className={styles.signalLabel}>Hiring Signal</div>
+              <div className={styles.signalValue} style={{ color: signalStyle.color }}>
+                {signal}
+              </div>
+              <div className={styles.signalDesc}>{getSignalDesc(signal)}</div>
+            </div>
+
+            <div className={styles.heroStats}>
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatNum}>{evaluations.length}</span>
+                <span className={styles.heroStatLabel}>Questions</span>
+              </div>
+              <div className={styles.heroStatDivider} />
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatNum}>
+                  {Object.keys(scorecard.per_mode_scores).length}
+                </span>
+                <span className={styles.heroStatLabel}>Modes</span>
+              </div>
+              <div className={styles.heroStatDivider} />
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatNum}>{scorecard.max_score}</span>
+                <span className={styles.heroStatLabel}>Max Score</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Per-mode scores */}
+          <div className={styles.section}>
+            <div className={styles.sectionLabel}>Per-Mode Breakdown</div>
+            <div className={styles.modeGrid}>
+              {Object.entries(scorecard.per_mode_scores).map(([mode, score]) => (
+                <div key={mode} className={styles.modeCard}>
+                  <div className={styles.modeCardTop}>
+                    <span className={styles.modeCardIcon}>{MODE_ICONS[mode]}</span>
+                    <ScoreRing score={score} size={48} strokeWidth={3} />
+                  </div>
+                  <div className={styles.modeCardLabel}>{MODE_LABELS[mode] || mode}</div>
+                  {scorecard.mode_summaries?.[mode] && (
+                    <div className={styles.modeCardSummary}>
+                      {scorecard.mode_summaries[mode]}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Strengths & Improvements */}
+          <div className={styles.feedbackRow}>
+            <div className={styles.feedbackCol}>
+              <div className={styles.sectionLabel}>
+                <span className={styles.labelDot} style={{ background: 'var(--accent)' }} />
+                Top Strengths
+              </div>
+              <div className={styles.feedbackList}>
+                {(scorecard.top_strengths || []).map((s, i) => (
+                  <div key={i} className={styles.feedbackItem}>
+                    <span className={styles.feedbackItemNum}>{String(i + 1).padStart(2, '0')}</span>
+                    <span className={styles.feedbackItemText}>{s}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.feedbackCol}>
+              <div className={styles.sectionLabel}>
+                <span className={styles.labelDot} style={{ background: 'var(--yellow)' }} />
+                Areas to Improve
+              </div>
+              <div className={styles.feedbackList}>
+                {(scorecard.top_improvements || []).map((s, i) => (
+                  <div key={i} className={styles.feedbackItemWarn}>
+                    <span className={styles.feedbackItemNum}>{String(i + 1).padStart(2, '0')}</span>
+                    <span className={styles.feedbackItemText}>{s}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Overall summary */}
+          {scorecard.overall_summary && (
+            <div className={styles.summary}>
+              <div className={styles.sectionLabel}>Overall Assessment</div>
+              <div className={styles.summaryText}>{scorecard.overall_summary}</div>
+            </div>
+          )}
+
+          {/* Per-question review */}
+          <div className={styles.section}>
+            <div className={styles.sectionLabel}>Question Review</div>
+            <div className={styles.questionList}>
+              {evaluations.map((ev, i) => (
+                <div key={i} className={styles.questionRow}>
+                  <div className={styles.questionRowLeft}>
+                    <span className={styles.questionRowNum}>{String(i + 1).padStart(2, '0')}</span>
+                    <span className={styles.questionRowMode}>{MODE_ICONS[ev.mode]}</span>
+                    <span className={styles.questionRowText}>{ev.question}</span>
+                  </div>
+                  <div className={styles.questionRowRight}>
+                    <span className={`${styles.questionRowVerdict} ${
+                      ev.verdict === 'Strong' ? styles.verdictStrong :
+                      ev.verdict === 'Adequate' ? styles.verdictAdequate :
+                      styles.verdictWeak
+                    }`}>{ev.verdict}</span>
+                    <span className={styles.questionRowScore}>{ev.score}/10</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className={styles.actions}>
+            <button className={styles.restartBtn} onClick={onRestart}>
+              ↺ Start Over
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+    </>
+
   )
 }
 
