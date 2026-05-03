@@ -10,8 +10,8 @@ llm_large = None
 
 if os.getenv("USE_LOCAL") == 'true':
     print('local model')
-    llm_small = ChatOllama(model=os.getenv('OLLAMA_MODEL'), temperature=0, num_predict=4096, num_ctx=4096)
-    llm_large = ChatOllama(model=os.getenv('OLLAMA_MODEL'), temperature=0, num_predict=4096, num_ctx=4096)
+    llm_small = ChatOllama(model=os.getenv('OLLAMA_MODEL'), temperature=0, num_predict=2048, num_ctx=2048)
+    llm_large = ChatOllama(model=os.getenv('OLLAMA_MODEL'), temperature=0, num_predict=2048, num_ctx=2048)
 else:
     print('cloud model')
     llm_small = ChatGroq(model=os.getenv("GROQ_MODEL_SMALL"), temperature=0, max_tokens=2048)
