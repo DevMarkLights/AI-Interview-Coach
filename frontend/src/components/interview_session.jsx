@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import styles from './interview_session.module.css'
 
 let API_BASE = 'http://localhost:8088'
@@ -22,6 +22,8 @@ export default function InterviewSession({question,questionNumber,totalQuestions
   const [loading, setLoading] = useState(false)
   const [evaluation, setEvaluation] = useState(null)
   const [error, setError] = useState(null)
+  const [isRecording, setIsRecording] = useState(false)
+  const recognitionRef = useRef(null)
 
   API_BASE = window.location.origin
   
@@ -57,6 +59,33 @@ export default function InterviewSession({question,questionNumber,totalQuestions
     setError(null)
   }
 
+  function startRecording() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      alert('Speech recognition not supported in this browser. Use Chrome.')
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+    recognition.continuous = true        // keeps listening until stopped
+    recognition.interimResults = true    // shows text as you speak
+    recognition.lang = 'en-US'
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map(r => r[0].transcript)
+        .join('')
+      setAnswer(transcript)              
+    }
+
+    recognition.start()
+    recognitionRef.current = recognition
+    setIsRecording(true)
+  }
+  function stopRecording() {
+    recognitionRef.current?.stop()
+    setIsRecording(false)
+  }
   const isLast = questionNumber === totalQuestions
   const wordCount = answer.trim() ? answer.trim().split(/\s+/).length : 0
 
@@ -118,6 +147,17 @@ export default function InterviewSession({question,questionNumber,totalQuestions
                   <span className={styles.wordCount}>
                     {wordCount > 0 ? `${wordCount} words` : ''}
                   </span>
+                  <div className={styles.actionRow}>
+                    <span>Speak</span>
+                    <button
+                    className={`${styles.micBtn} ${isRecording ? styles.micActive : ''}`}
+                    onClick={isRecording ? stopRecording : startRecording}
+                    disabled={loading}
+                    title={isRecording ? 'Stop recording' : 'Speak your answer'}
+                    >
+                      {isRecording ? '⏹' : '🎙'}
+                    </button>
+                  </div>
                 </div>
                 <textarea
                   className={styles.textarea}
@@ -226,6 +266,17 @@ export default function InterviewSession({question,questionNumber,totalQuestions
                   <span className={styles.wordCount}>
                     {wordCount > 0 ? `${wordCount} words` : ''}
                   </span>
+                  <div className={styles.actionRow}>
+                    <span>Speak</span>
+                    <button
+                    className={`${styles.micBtn} ${isRecording ? styles.micActive : ''}`}
+                    onClick={isRecording ? stopRecording : startRecording}
+                    disabled={loading}
+                    title={isRecording ? 'Stop recording' : 'Speak your answer'}
+                    >
+                      {isRecording ? '⏹' : '🎙'}
+                    </button>
+                  </div>
                 </div>
                 <textarea
                   className={styles.textarea}
