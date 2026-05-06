@@ -49,6 +49,12 @@ dispatch_question_agents    — LangGraph Send fan-out
 
 ---
 
+## Speech Recognition Notes
+Speech recognition requires:
+- Chrome 25+
+- Edge 79+
+- Safari 26+
+
 ## Folder Structure
 ```
 ai-interview-coach/

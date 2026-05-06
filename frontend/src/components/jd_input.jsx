@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import styles from './jd_input.module.css'
 
 let API_BASE = 'http://localhost:8088'
@@ -10,16 +10,30 @@ export default function JDInput({ onComplete, mobile }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [loadingStep, setLoadingStep] = useState('')
-
+  const numberOfQuestions = useRef(null)
   API_BASE = window.location.origin
-
   async function handleSubmit() {
+    let ctp = parseInt(localStorage.getItem('timestamp'))
+    if(ctp){
+      let timestampMs = Date.now();
+      let diff = timestampMs - ctp 
+      if(diff < 60000){
+        let tl = Math.ceil((60000 - diff) / 1000)
+        setError(`You are in Cooldown timeframe. Please Wait ${tl} seconds!`)
+        return
+      }else{
+        localStorage.setItem('timestamp',timestampMs)
+      }
+    }else{
+      localStorage.setItem('timestamp',Date.now())
+    }
+
     setError(null)
     setLoading(true)
 
     // const payload = mode === 'paste' ? { job_description: text } : { job_description: url }
 
-    const payload = {"job_description":text}
+    const payload = {"job_description":text, numberOfQuestions: numberOfQuestions.current.value}
 
     try {
       setLoadingStep('Analyzing job description...')
@@ -142,23 +156,32 @@ export default function JDInput({ onComplete, mobile }) {
           )}
 
           {/* Submit */}
-          <button
-            className={styles.submitBtn}
-            onClick={handleSubmit}
-            disabled={!isReady || loading}
-          >
-            {loading ? (
-              <span className={styles.loadingRow}>
-                <span className={styles.spinner} />
-                {loadingStep}
-              </span>
-            ) : (
-              <>
-                Analyze & Generate Questions
-                <span className={styles.submitArrow}>→</span>
-              </>
-            )}
-          </button>
+          <div className={styles.submitDiv}>
+            <span style={{opacity: !isReady || loading ? '.35':'1'}}>Number of Questions:</span>
+            <select className={styles.numberOfQuestions} disabled={!isReady || loading} ref={numberOfQuestions}>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+            </select>
+            <button
+              className={styles.submitBtn}
+              onClick={handleSubmit}
+              disabled={!isReady || loading}
+            >
+              {loading ? (
+                <span className={styles.loadingRow}>
+                  <span className={styles.spinner} />
+                  {loadingStep}
+                </span>
+              ) : (
+                <>
+                  Analyze & Generate Questions
+                  <span className={styles.submitArrow}>→</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         <div className={styles.hint}>
@@ -256,23 +279,32 @@ export default function JDInput({ onComplete, mobile }) {
           )}
 
           {/* Submit */}
-          <button
-            className={styles.submitBtn}
-            onClick={handleSubmit}
-            disabled={!isReady || loading}
-          >
-            {loading ? (
-              <span className={styles.loadingRow}>
-                <span className={styles.spinner} />
-                {loadingStep}
-              </span>
-            ) : (
-              <>
-                Analyze & Generate Questions
-                <span className={styles.submitArrow}>→</span>
-              </>
-            )}
-          </button>
+          <div className={styles.submitDiv}>
+            <span style={{opacity: !isReady || loading ? '.35':'1'}}>Number of Questions:</span>
+            <select className={styles.numberOfQuestions} disabled={!isReady || loading} ref={numberOfQuestions}>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+            </select>
+            <button
+              className={styles.submitBtn}
+              onClick={handleSubmit}
+              disabled={!isReady || loading}
+            >
+              {loading ? (
+                <span className={styles.loadingRow}>
+                  <span className={styles.spinner} />
+                  {loadingStep}
+                </span>
+              ) : (
+                <>
+                  Analyze & Generate Questions
+                  <span className={styles.submitArrow}>→</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         <div className={styles.hint}>

@@ -29,7 +29,7 @@ export default function Scorecard({ evaluations, jdAnalysis, onRestart, onScorec
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   
-  API_BASE = window.location.origin
+  API_BASE = window.location.origin  
   
   useEffect(() => {
     async function fetchScorecard() {

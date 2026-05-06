@@ -240,7 +240,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  width: 100%;
+  /* width: 100%; */
   padding: 14px 24px;
   background: var(--accent);
   color: #0d0d0d;
@@ -299,6 +299,27 @@
   color: var(--accent);
 }
 
+.submitDiv{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.numberOfQuestions{
+  width: 10%;
+  border-radius: 5px;
+  height: 92%;
+  padding: 18px;
+}
+
+.numberOfQuestions:disabled{
+  opacity: .35;
+}
+.numberOfQuestions:hover:not(:disabled){
+  cursor: pointer;
+}
+
 /* ── Animations ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -312,4 +333,28 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
+}
+
+@media (max-width: 600px) {
+  .submitDiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .submitDiv span{
+    font-size: 11px;
+    width: 20%;
+  }
+  .numberOfQuestions{
+    width: 20%;
+    border-radius: 5px;
+    height: 80%;
+    padding: 0 0 0 10px;
+  }
+  .submitBtn{
+    padding: 8px;
+    width: 55%;
+    height: 80%;
+  }
 }

@@ -120,7 +120,7 @@ def _build_user_prompt(mode: str, jd_analysis: dict) -> str:
 def question_agent(interviewState: InterviewState) -> list[dict]:
 
     mode = interviewState['mode']
-    sys_prompt = _MODE_PROMPTS[interviewState['mode']].replace("/NUMBER_OF_Questions/", str(NUMBER_OF_QUESTIONS))
+    sys_prompt = _MODE_PROMPTS[interviewState['mode']].replace("/NUMBER_OF_Questions/", str(interviewState['numberOfQuestions']))
     messages = [
         {"role": "system", "content": f"{_BASE_CONTEXT}\n\n{sys_prompt}"},
         {"role": "user", "content": _build_user_prompt(interviewState['mode'], interviewState['jd_analysis'])},

@@ -25,8 +25,7 @@ export default function InterviewSession({question,questionNumber,totalQuestions
   const [isRecording, setIsRecording] = useState(false)
   const recognitionRef = useRef(null)
 
-  API_BASE = window.location.origin
-  
+  API_BASE = window.location.origin  
   async function handleSubmit() {
     if (!answer.trim()) return
     setError(null)
@@ -82,6 +81,7 @@ export default function InterviewSession({question,questionNumber,totalQuestions
     recognitionRef.current = recognition
     setIsRecording(true)
   }
+  
   function stopRecording() {
     recognitionRef.current?.stop()
     setIsRecording(false)

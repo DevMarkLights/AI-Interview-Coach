@@ -8,7 +8,7 @@ from graph.agents.question_generator import question_agent
 
 
 def dispatch_question_agents(interviewState: InterviewState):
-    return [Send("question_agent_node", {"jd_raw": interviewState["jd_raw"], "mode": mode, "jd_analysis": interviewState['jd_analysis']}) for mode, jd_analysis in interviewState['jd_analysis']['interview_focus_areas'].items()]
+    return [Send("question_agent_node", {"jd_raw": interviewState["jd_raw"], "mode": mode, "jd_analysis": interviewState['jd_analysis'], 'numberOfQuestions':interviewState['numberOfQuestions']}) for mode, jd_analysis in interviewState['jd_analysis']['interview_focus_areas'].items()]
 
 
 def build_interview_graph() -> StateGraph:
