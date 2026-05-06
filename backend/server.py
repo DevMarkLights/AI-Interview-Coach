@@ -34,7 +34,7 @@ logging.getLogger("uvicorn.error").setLevel(logging.INFO)
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3005","https://marks-pi.com"],
     allow_credentials=False,   # MUST be FALSE
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,7 +55,8 @@ async def analyze(request: Request):
             logging.error(e)
             raise HTTPException(status_code=500, detail={'error': str(e)}) 
     else:
-        return {'error': 'job_description not in request'}
+        logging.error('job_description or numberOfQuestions not in request')
+        raise HTTPException(status_code=400, detail={'error': 'job_description or numberOfQuestions not in request'})
 
 @app.post("/ai-interview-coach/answer")
 async def answer(request: Request):
