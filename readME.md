@@ -55,6 +55,8 @@ Speech recognition requires:
 - Edge 79+
 - Safari 26+
 
+---
+
 ## Folder Structure
 ```
 ai-interview-coach/
