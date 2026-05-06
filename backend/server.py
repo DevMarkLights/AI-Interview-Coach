@@ -104,7 +104,7 @@ async def deploy(request: Request):
     subprocess.Popen(["bash", f"/mnt/nvme/AI-Interview-Coach/deploy.bash"])
     return {"status": "deploying", "service": 'Security Service'}
     
-# app.mount('/ai-interview-coach/', StaticFiles(directory="dist", html=True), name="static")
+app.mount('/ai-interview-coach/', StaticFiles(directory="dist", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
